@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 from matplotlib import pyplot as plt
-import glob
+import imageio
 import os
 
 
@@ -154,16 +154,27 @@ def imageEntropyGif(gifFile):
             plt.xlabel('Entropy in 10x10 neighbourhood')
             plt.colorbar()
 
-            plt.savefig(str(frameNumber) + str(gifFile) + "FIG.png")
+            frame = str(frameNumber).zfill(3)
+            plt.savefig(str(frame) + ".png")
             plt.clf()
     except EOFError:
         pass  # end of sequence
 
-def createGif():
-    gifName = 'gifName'
-    imageList = glob.glob('*.png')
-    list.sort(imageList)
 
-imageEntropyGif("/Users/Sarah/Desktop/imageProcessing/venv/images/forest.gif")
+def createGif():
+    file_names = sorted((fn for fn in os.listdir('.') if fn.endswith('.png'))) #sort files
+    print file_names
+    with imageio.get_writer('newGif.gif', mode='I', duration=0.05) as writer:
+        for filename in file_names:
+            image = imageio.imread(filename)
+            writer.append_data(image)
+    writer.close()
+
+# imageEntropyGif("/Users/Sarah/Desktop/imageProcessing/venv/images/forest.gif")
 # imageEntropy("/Users/Sarah/Desktop/imageProcessing/venv/images/forest.jpg")
 # imageEntropy("/Users/Sarah/Desktop/imageProcessing/venv/images/urban.jpg")
+
+
+createGif()
+
+
